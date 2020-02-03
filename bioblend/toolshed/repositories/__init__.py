@@ -465,3 +465,38 @@ class ToolShedRepositoryClient(Client):
         if category_ids is not None:
             payload['category_ids[]'] = category_ids
         return self._post(payload)
+
+    def updates(self, name, owner, revision, hexlify=False):
+        """
+        Return a dictionary with boolean values for whether there are updates
+        available for the repository revision, newer installable revisions
+        available, the revision is the latest installable revision, and if the
+        repository is deprecated.
+
+        :type name: str
+        :param name: the name of the repository
+
+        :type owner: str
+        :param owner: the owner of the repository
+
+        :type revision: str
+        :param revision: the revision to test updatability against
+
+        :type hexlify: bool
+        :param hexlify: whether to hexlify response
+
+        :rtype: dict
+        :return: Dict containing boolean values for keys
+          'latest_installable_revision', 'revision_update', 'revision_upgrade',
+          'repository_deprecated'
+        """
+        url = self.url + '/updates'
+        params = {
+            'name': name,
+            'owner': owner,
+            'changeset_revision': revision,
+            'hexlify': hexlify,
+        }
+        r = self._get(url=url, params=params)
+
+        return r
